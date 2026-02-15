@@ -20,17 +20,17 @@ export const AboutSection: React.FC = () => {
       <div className="w-full">
         <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">About the Author</h3>
         {/* Profile Image Row */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center flex-col items-center">
           <div className="h-32 w-32 bg-pink-100 rounded-full flex items-center justify-center overflow-hidden border-4 border-pink-200">
             <img src={PROFILE_IMAGE} alt={AUTHOR_NAME} className="object-cover h-full w-full" />
           </div>
-        </div>
-        {/* About Text Row */}
-        <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 flex flex-col items-center">
           <div className="flex items-center gap-2 mb-2">
             <h4 className="text-xl font-bold text-gray-900 text-center">{AUTHOR_NAME}</h4>
             <CheckCircle className="h-5 w-5 text-pink-500 fill-current" />
           </div>
+        </div>
+        {/* About Text Row */}
+        <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 flex flex-col items-center">
           <p className="text-gray-600 mb-4 text-center">{ABOUT_TEXT_1}</p>
           <p className="text-gray-600 mb-4 text-center">{ABOUT_TEXT_2}</p>
           <div className="flex flex-wrap gap-4 justify-center">

@@ -8,6 +8,7 @@ export interface Book {
   price: number;
   originalPrice?: number;
   rating?: number;
+  purchase_link: string;
   reviews?: number;
   description: string;
   details: {
@@ -31,7 +32,8 @@ export const books: Book[] = [
     title: "100 Nutritious Recipes",
     subtitle: "South Indian Inspired",
     author: "Dento Nutrition",
-    publisher: "Dento Press",
+    publisher: "Dento Nutrition",
+    purchase_link: "https://rzp.io/rzp/JOWZChe",
     price: 499,
     originalPrice: 999,
     rating: 4.8,
@@ -64,7 +66,8 @@ export const books: Book[] = [
     title: "30 Weight Gain Recipes",
     subtitle: "For Children Above 1 Year",
     author: "Dento Nutrition",
-    publisher: "Dento Press",
+    publisher: "Dento Nutrition",
+    purchase_link: "https://rzp.io/rzp/JOWZChe",
     price: 299,
     originalPrice: 599,
     rating: 4.9,
@@ -97,8 +100,9 @@ export const books: Book[] = [
     title: "30 Weight Gain Recipes",
     subtitle: "For Babies Aged 6 to 12 Months",
     author: "Dento Nutrition",
-    publisher: "Dento Press",
+    publisher: "Dento Nutrition",
     price: 299,
+    purchase_link: "https://rzp.io/rzp/JOWZChe",
     originalPrice: 599,
     rating: 4.7,
     reviews: 620,
@@ -130,9 +134,10 @@ export const books: Book[] = [
     title: "30 Dessert Recipes",
     subtitle: "No Sugar • No Maida",
     author: "Dento Nutrition",
-    publisher: "Dento Press",
+    publisher: "Dento Nutrition",
     price: 349,
     originalPrice: 699,
+    purchase_link: "https://rzp.io/rzp/JOWZChe",
     rating: 4.9,
     reviews: 930,
     description:

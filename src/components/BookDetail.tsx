@@ -45,7 +45,12 @@ export const BookDetail: React.FC<BookDetailProps> = ({ book }) => {
         </div>
 
         <div className="flex gap-4 mt-8 w-full max-w-sm">
-          <button className="flex-1 py-3 px-6 rounded-xl cursor-pointer bg-cyan-200 font-bold text-gray-900 hover:bg-cyan-300 transition-colors shadow-sm">
+          <button
+            className="flex-1 py-3 px-6 rounded-xl cursor-pointer bg-cyan-200 font-bold text-gray-900 hover:bg-cyan-300 transition-colors shadow-sm"
+            onClick={() => {
+              window.open(book.purchase_link, "_blank");
+            }}
+          >
             Buy ₹{book.price}{" "}
             {book.originalPrice && (
               <span className="line-through pl-2 text-gray-600">₹{book.originalPrice}</span>
@@ -55,13 +60,10 @@ export const BookDetail: React.FC<BookDetailProps> = ({ book }) => {
       </div>
 
       {/* Right Column: Book Info */}
-      <div className="flex flex-col justify-center">
+      <div className="flex flex-col   justify-center">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">{book.title}</h1>
         <div className="flex items-center gap-2 mb-2">
           <p className="text-xl text-gray-600">{book.author}</p>
-          <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs font-bold rounded uppercase tracking-wide">
-            {book.publisher}
-          </span>
         </div>
 
         {book.rating && (
