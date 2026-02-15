@@ -1,12 +1,12 @@
 import Search from "./Search";
 
 export const Header = () => {
-
   return (
     <header className="flex items-center justify-between px-8 py-4 bg-white shadow-sm sticky top-0 z-50">
       <div className="flex items-center gap-2">
+        <img src="/logo.jpeg" alt="Dento Nutrition Logo" className="w-16 h-16" />
         <h1 className="text-2xl font-bold text-gray-800">
-          <span className="text-pink-600">DENTO</span> PRESS
+          <span className="text-blue-400">DENTO</span> NUTRITION
         </h1>
       </div>
 
