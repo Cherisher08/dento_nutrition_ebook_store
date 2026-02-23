@@ -62,9 +62,6 @@ export const BookDetail: React.FC<BookDetailProps> = ({ book }) => {
       {/* Right Column: Book Info */}
       <div className="flex flex-col   justify-center">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">{book.title}</h1>
-        <div className="flex items-center gap-2 mb-2">
-          <p className="text-xl text-gray-600">{book.author}</p>
-        </div>
 
         {book.rating && (
           <div className="flex items-center gap-1 mb-8">

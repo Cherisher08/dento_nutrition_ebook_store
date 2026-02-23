@@ -6,7 +6,6 @@ import { OtherBooks } from "../components/OtherBooks";
 import useBooks from "../contexts/booksContext";
 import Loader from "../components/Loader";
 import Search from "../components/Search";
-import { Box } from "@mui/material";
 
 export const BookPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -32,23 +31,20 @@ export const BookPage: React.FC = () => {
   }
 
   return (
-    <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-2">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
       <div className="md:hidden mt-2">
         <Search />
       </div>
 
-      <div className="flex flex-col md:flex-row space-between gap-12 mt-6 w-full">
-        <BookDetail book={book} />
-        <AboutSection />
-      </div>
+      <BookDetail book={book} />
 
-      <Box className="max-w-7xl mx-auto">
-        <OtherBooks
-          currentBookId={book.id}
-          books={books}
-          onBookClick={(b) => navigate(`/book/${b.id}`)}
-        />
-      </Box>
+      <AboutSection />
+
+      <OtherBooks
+        currentBookId={book.id}
+        books={books}
+        onBookClick={(b) => navigate(`/book/${b.id}`)}
+      />
     </div>
   );
 };

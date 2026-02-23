@@ -53,6 +53,7 @@ export const books: Book[] = [
       "Child-friendly yet adult-approved",
     ],
     coverColor: "bg-orange-500",
+    cover_image: "/public/100_nutritious_recipes.png",
     authorProfile: {
       about:
         "Dento Nutrition is dedicated to providing scientifically backed, nutritionally balanced, and delicious recipes for families. With a focus on child nutrition and healthy eating habits, each recipe is crafted to ensure it meets the highest standards of taste and health.",
@@ -87,6 +88,7 @@ export const books: Book[] = [
       "Helps improve weight gradually",
     ],
     coverColor: "bg-blue-500",
+    cover_image: "/public/weight_gain_recipes_1year_book_cover.png",
     authorProfile: {
       about:
         "Dento Nutrition is dedicated to providing scientifically backed, nutritionally balanced, and delicious recipes for families. With a focus on child nutrition and healthy eating habits, each recipe is crafted to ensure it meets the highest standards of taste and health.",
@@ -121,6 +123,7 @@ export const books: Book[] = [
       "Nutrient-rich for infants",
     ],
     coverColor: "bg-green-500",
+    cover_image: "/public/weight_gain_recipes_612mons_book_cover.png",
     authorProfile: {
       about:
         "Dento Nutrition is dedicated to providing scientifically backed, nutritionally balanced, and delicious recipes for families. With a focus on child nutrition and healthy eating habits, each recipe is crafted to ensure it meets the highest standards of taste and health.",
@@ -155,6 +158,7 @@ export const books: Book[] = [
       "Balanced and nourishing",
     ],
     coverColor: "bg-pink-500",
+    cover_image: "",
     authorProfile: {
       about:
         "Dento Nutrition is dedicated to providing scientifically backed, nutritionally balanced, and delicious recipes for families. With a focus on child nutrition and healthy eating habits, each recipe is crafted to ensure it meets the highest standards of taste and health.",

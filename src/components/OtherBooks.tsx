@@ -1,7 +1,6 @@
-
-import React from 'react';
-import type { Book } from '../data/books';
-import { ArrowRight } from 'lucide-react';
+import React from "react";
+import type { Book } from "../data/books";
+import { ArrowRight } from "lucide-react";
 
 interface OtherBooksProps {
   currentBookId: number;
@@ -10,7 +9,7 @@ interface OtherBooksProps {
 }
 
 export const OtherBooks: React.FC<OtherBooksProps> = ({ currentBookId, books, onBookClick }) => {
-  const otherBooks = books.filter(book => book.id !== currentBookId);
+  const otherBooks = books.filter((book) => book.id !== currentBookId);
 
   if (otherBooks.length === 0) return null;
 
@@ -27,10 +26,16 @@ export const OtherBooks: React.FC<OtherBooksProps> = ({ currentBookId, books, on
           >
             {book.cover_image ? (
               <div className="w-full max-w-sm aspect-4/5 rounded-2xl shadow-2xl overflow-hidden mb-8 transform transition-transform hover:scale-105 duration-300">
-                <img src={book.cover_image} alt={book.title} className="w-full h-full object-cover" />
+                <img
+                  src={book.cover_image}
+                  alt={book.title}
+                  className="w-full h-full object-cover"
+                />
               </div>
             ) : (
-              <div className={`w-full max-w-sm aspect-3/4 rounded-2xl shadow-2xl ${book.coverColor} flex items-center justify-center p-8 mb-8 transform transition-transform hover:scale-105 duration-300`}>
+              <div
+                className={`w-full max-w-sm aspect-4/5 rounded-2xl shadow-2xl ${book.coverColor} flex items-center justify-center p-8 mb-8 transform transition-transform hover:scale-105 duration-300`}
+              >
                 <div className="text-center text-white">
                   <h2 className="text-xl font-bold mb-2">{book.title}</h2>
                   <p className="text-lg opacity-90 mb-2">{book.subtitle}</p>
@@ -40,7 +45,6 @@ export const OtherBooks: React.FC<OtherBooksProps> = ({ currentBookId, books, on
             )}
 
             <h4 className="font-bold text-gray-900 truncate mb-1">{book.title}</h4>
-            <p className="text-sm text-gray-500 mb-3">{book.author}</p>
 
             <div className="flex items-center justify-between mt-auto">
               <span className="font-bold text-gray-900">₹{book.price}</span>
