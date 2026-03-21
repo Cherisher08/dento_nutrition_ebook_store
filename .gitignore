@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# VS code settings
+.vscode/settings.json
+Dento Nutrition.code-workspace

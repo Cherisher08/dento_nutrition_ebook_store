@@ -1,14 +1,180 @@
-import React from "react";
+import React, { useState } from "react";
 import { type Book } from "../data/books";
 import { FileText, BookOpen, Check, Languages } from "lucide-react";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
+// Extend window to include Razorpay
+declare global {
+  interface Window {
+    Razorpay: new (options: RazorpayOptions) => RazorpayInstance;
+  }
+}
+interface RazorpayOptions {
+  key: string;
+  amount: number;
+  currency: string;
+  order_id: string;
+  name: string;
+  description: string;
+  image?: string;
+  prefill?: { contact?: string };
+  handler: (response: RazorpayResponse) => void;
+  modal?: { ondismiss?: () => void };
+}
+interface RazorpayResponse {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
+}
+interface RazorpayInstance {
+  open: () => void;
+}
 
 interface BookDetailProps {
   book: Book;
 }
 
 export const BookDetail: React.FC<BookDetailProps> = ({ book }) => {
+  const [phone, setPhone] = useState("");
+  const [showPhoneModal, setShowPhoneModal] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<"idle" | "loading" | "success" | "error">(
+    "idle",
+  );
+  const [statusMessage, setStatusMessage] = useState("");
+
+  const handleBuyClick = () => {
+    setShowPhoneModal(true);
+  };
+
+  const handlePhoneSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setShowPhoneModal(false);
+    setPaymentStatus("loading");
+
+    try {
+      // Step 1: Create Razorpay order
+      const orderRes = await fetch(`${API_URL}/create-order`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ book_id: book.id, phone_number: phone }),
+      });
+      if (!orderRes.ok) throw new Error("Failed to create order");
+      const order = await orderRes.json();
+
+      // Step 2: Open Razorpay checkout
+      const rzp = new window.Razorpay({
+        key: order.key_id,
+        amount: order.amount,
+        currency: order.currency,
+        order_id: order.order_id,
+        name: "Dento Nutrition",
+        description: book.title,
+        image: "/logo.jpeg",
+        prefill: { contact: phone },
+        handler: async (response: RazorpayResponse) => {
+          // Step 3: Verify payment and send WhatsApp
+          try {
+            const verifyRes = await fetch(`${API_URL}/verify-payment`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                phone_number: phone,
+                book_id: book.id,
+              }),
+            });
+            const result = await verifyRes.json();
+            if (result.success) {
+              setPaymentStatus("success");
+              setStatusMessage(result.message || "Payment successful! Check your WhatsApp.");
+            } else {
+              throw new Error("Verification failed");
+            }
+          } catch {
+            setPaymentStatus("error");
+            setStatusMessage("Payment received but verification failed. Please contact support.");
+          }
+        },
+        modal: {
+          ondismiss: () => setPaymentStatus("idle"),
+        },
+      });
+      rzp.open();
+    } catch (err) {
+      setPaymentStatus("error");
+      setStatusMessage(
+        err instanceof Error ? err.message : "Something went wrong. Please try again.",
+      );
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16 mt-6">
+      {/* Phone Number Modal */}
+      {showPhoneModal && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4">
+          <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm">
+            <h3 className="text-lg font-bold text-gray-800 mb-1">Enter your WhatsApp number</h3>
+            <p className="text-sm text-gray-500 mb-4">
+              Your eBook will be sent to this number after payment.
+            </p>
+            <form onSubmit={handlePhoneSubmit} className="space-y-4">
+              <input
+                type="tel"
+                required
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="919876543210 (with country code, no +)"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+              />
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowPhoneModal(false)}
+                  className="flex-1 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg text-sm transition"
+                >
+                  Proceed to Pay
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Payment Status Modal */}
+      {(paymentStatus === "success" || paymentStatus === "error") && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4">
+          <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm text-center">
+            <div
+              className={`text-4xl mb-3 ${paymentStatus === "success" ? "text-green-500" : "text-red-500"}`}
+            >
+              {paymentStatus === "success" ? "✅" : "❌"}
+            </div>
+            <h3
+              className={`text-lg font-bold mb-2 ${paymentStatus === "success" ? "text-green-700" : "text-red-700"}`}
+            >
+              {paymentStatus === "success" ? "Payment Successful!" : "Something went wrong"}
+            </h3>
+            <p className="text-gray-600 text-sm mb-5">{statusMessage}</p>
+            <button
+              onClick={() => setPaymentStatus("idle")}
+              className="w-full py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg text-sm transition"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Left Column: Cover Image */}
       <div className="flex flex-col items-center">
         {book.cover_image ? (
@@ -46,21 +212,26 @@ export const BookDetail: React.FC<BookDetailProps> = ({ book }) => {
 
         <div className="flex gap-4 mt-8 w-full max-w-sm">
           <button
-            className="flex-1 py-3 px-6 rounded-xl cursor-pointer bg-cyan-200 font-bold text-gray-900 hover:bg-cyan-300 transition-colors shadow-sm"
-            onClick={() => {
-              window.open(book.purchase_link, "_blank");
-            }}
+            className="flex-1 py-3 px-6 rounded-xl cursor-pointer bg-cyan-200 font-bold text-gray-900 hover:bg-cyan-300 transition-colors shadow-sm disabled:opacity-60"
+            onClick={handleBuyClick}
+            disabled={paymentStatus === "loading"}
           >
-            Buy ₹{book.price}{" "}
-            {book.originalPrice && (
-              <span className="line-through pl-2 text-gray-600">₹{book.originalPrice}</span>
+            {paymentStatus === "loading" ? (
+              "Processing…"
+            ) : (
+              <>
+                Buy ₹{book.price}{" "}
+                {book.originalPrice && (
+                  <span className="line-through pl-2 text-gray-600">₹{book.originalPrice}</span>
+                )}
+              </>
             )}
           </button>
         </div>
       </div>
 
       {/* Right Column: Book Info */}
-      <div className="flex flex-col   justify-center">
+      <div className="flex flex-col justify-center">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">{book.title}</h1>
 
         {book.rating && (

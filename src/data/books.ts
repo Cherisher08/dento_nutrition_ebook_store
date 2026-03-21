@@ -19,11 +19,8 @@ export interface Book {
   };
   highlights?: string[];
   coverColor?: string;
-  authorProfile: {
-    about: string;
-    accolades: string[];
-  };
   editorNote?: string;
+  document_url?: string;
 }
 
 export const books: Book[] = [
@@ -54,13 +51,9 @@ export const books: Book[] = [
     ],
     coverColor: "bg-orange-500",
     cover_image: "/100_nutritious_recipes.png",
-    authorProfile: {
-      about:
-        "Dento Nutrition is dedicated to providing scientifically backed, nutritionally balanced, and delicious recipes for families. With a focus on child nutrition and healthy eating habits, each recipe is crafted to ensure it meets the highest standards of taste and health.",
-      accolades: ["Certified Nutritionist", "Best Seller Award"],
-    },
     editorNote:
       "A must-have collection for parents looking to introduce nutritious and tasty meals to their children's diet. Highly recommended for its simplicity and health benefits.",
+    document_url: "",
   },
   {
     id: 2,
@@ -89,13 +82,9 @@ export const books: Book[] = [
     ],
     coverColor: "bg-blue-500",
     cover_image: "/weight_gain_recipes_1year_book_cover.png",
-    authorProfile: {
-      about:
-        "Dento Nutrition is dedicated to providing scientifically backed, nutritionally balanced, and delicious recipes for families. With a focus on child nutrition and healthy eating habits, each recipe is crafted to ensure it meets the highest standards of taste and health.",
-      accolades: ["Certified Nutritionist", "Best Seller Award"],
-    },
     editorNote:
       "Perfect for parents concerned about their child's weight. These recipes are packed with healthy calories and proteins, making weight gain natural and delicious.",
+    document_url: "",
   },
   {
     id: 3,
@@ -124,13 +113,9 @@ export const books: Book[] = [
     ],
     coverColor: "bg-green-500",
     cover_image: "/weight_gain_recipes_612mons_book_cover.png",
-    authorProfile: {
-      about:
-        "Dento Nutrition is dedicated to providing scientifically backed, nutritionally balanced, and delicious recipes for families. With a focus on child nutrition and healthy eating habits, each recipe is crafted to ensure it meets the highest standards of taste and health.",
-      accolades: ["Certified Nutritionist", "Best Seller Award"],
-    },
     editorNote:
       "A thoughtful guide for new parents. The focus on digestion and age-appropriate ingredients makes this a safe and nutritious choice for infants.",
+    document_url: "",
   },
   {
     id: 4,
@@ -159,12 +144,8 @@ export const books: Book[] = [
     ],
     coverColor: "bg-pink-500",
     cover_image: "",
-    authorProfile: {
-      about:
-        "Dento Nutrition is dedicated to providing scientifically backed, nutritionally balanced, and delicious recipes for families. With a focus on child nutrition and healthy eating habits, each recipe is crafted to ensure it meets the highest standards of taste and health.",
-      accolades: ["Certified Nutritionist", "Best Seller Award"],
-    },
     editorNote:
       "Finally, desserts you can feel good about! These recipes prove that healthy can be delicious, without the guilt of sugar or maida.",
+    document_url: "",
   },
 ];

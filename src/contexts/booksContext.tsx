@@ -1,43 +1,53 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { books as bk, type Book } from "../data/books";
-// import axios from "axios";
+import { type Book } from "../data/books";
 
-const bookContext = createContext<{ books: Book[], setBooks: React.Dispatch<React.SetStateAction<Book[]>>, loading: boolean } | null>(null);
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
+const bookContext = createContext<{
+  books: Book[];
+  setBooks: React.Dispatch<React.SetStateAction<Book[]>>;
+  loading: boolean;
+  refetch: () => void;
+} | null>(null);
 
 export const BookProvider = ({ children }: { children: React.ReactNode }) => {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchBooks = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/public/books`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data: Book[] = await res.json();
+      setBooks(data);
+    } catch (err) {
+      console.error("Failed to load books from API, falling back to static data", err);
+      const { books: staticBooks } = await import("../data/books");
+      setBooks(staticBooks);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        setLoading(true);
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 800));
-        // const response = await axios.get("");
-        // setBooks(response.data);
-        setBooks(bk)
-      } catch (error) {
-        console.error("Error fetching books:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchBooks();
   }, []);
 
-  return <bookContext.Provider value={{ books, setBooks, loading }}>
-    {children}
-  </bookContext.Provider>
-}
+  return (
+    <bookContext.Provider value={{ books, setBooks, loading, refetch: fetchBooks }}>
+      {children}
+    </bookContext.Provider>
+  );
+};
 
 const useBooks = () => {
   const context = useContext(bookContext);
   if (!context) {
-    throw new Error("useContext must be used within a Provider");
+    throw new Error("useBooks must be used within a BookProvider");
   }
   return context;
-}
+};
 
-
+// eslint-disable-next-line react-refresh/only-export-components
 export default useBooks;
