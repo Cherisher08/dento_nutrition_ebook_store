@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Search as SearchIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { books } from '../data/books';
+import useBooks from '../contexts/booksContext';
 
 
 const Search = () => {
   const [showResults, setShowResults] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+
+  const { books } = useBooks();
 
   const filteredBooks = books.filter(book =>
     book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||

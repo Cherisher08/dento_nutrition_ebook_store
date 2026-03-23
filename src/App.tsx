@@ -5,6 +5,8 @@ import { BookPage } from "./pages/BookPage";
 import { BookProvider } from "./contexts/booksContext";
 import { AuthProvider } from "./contexts/authContext";
 import AdminPage from "./pages/AdminPage";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
@@ -36,6 +38,18 @@ function App() {
             {/* Admin route — no Header/Footer */}
             <Route path="/admin" element={<AdminPage />} />
           </Routes>
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
         </AuthProvider>
       </BookProvider>
     </BrowserRouter>

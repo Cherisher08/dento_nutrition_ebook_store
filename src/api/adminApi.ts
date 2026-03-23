@@ -1,4 +1,4 @@
-import { type Book } from "../data/books";
+import { type Book } from "../contexts/booksContext";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 

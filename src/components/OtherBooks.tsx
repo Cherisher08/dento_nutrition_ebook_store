@@ -1,5 +1,5 @@
 import React from "react";
-import type { Book } from "../data/books";
+import type { Book } from "../contexts/booksContext";
 import { ArrowRight } from "lucide-react";
 
 interface OtherBooksProps {

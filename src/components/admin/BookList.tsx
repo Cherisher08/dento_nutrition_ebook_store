@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../../contexts/authContext";
 import { apiGetBooks, apiCreateBook, apiUpdateBook, apiDeleteBook } from "../../api/adminApi";
-import { type Book } from "../../data/books";
+import { type Book } from "../../contexts/booksContext";
 import BookFormModal from "./BookFormModal";
 import ConfirmDialog from "./ConfirmDialog";
 
@@ -63,7 +63,7 @@ export default function BookList() {
         </div>
         <button
           onClick={logout}
-          className="text-sm text-gray-500 hover:text-red-500 transition font-medium"
+          className="text-sm text-gray-500 hover:text-red-500 transition font-medium cursor-pointer"
         >
           Sign Out
         </button>
@@ -80,7 +80,7 @@ export default function BookList() {
           </div>
           <button
             onClick={() => setModalBook(null)}
-            className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition"
+            className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition cursor-pointer"
           >
             + Add Book
           </button>
@@ -136,13 +136,13 @@ export default function BookList() {
                 <div className="flex gap-2 shrink-0">
                   <button
                     onClick={() => setModalBook(book)}
-                    className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700 transition"
+                    className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700 transition cursor-pointer"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => setDeleteTarget(book)}
-                    className="px-3 py-1.5 text-sm border border-red-200 rounded-lg hover:bg-red-50 text-red-500 transition"
+                    className="px-3 py-1.5 text-sm border border-red-200 rounded-lg hover:bg-red-50 text-red-500 transition cursor-pointer"
                   >
                     Delete
                   </button>

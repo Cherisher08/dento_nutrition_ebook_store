@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { type Book } from "../data/books";
+import { type Book } from "../contexts/booksContext";
 import { FileText, BookOpen, Check, Languages } from "lucide-react";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -47,8 +49,14 @@ export const BookDetail: React.FC<BookDetailProps> = ({ book }) => {
     setShowPhoneModal(true);
   };
 
+  // Clean phone number: remove spaces, keep + and digits
+  const cleanPhoneNumber = (phone: string): string => {
+    return phone.replace(/\s+/g, "").replace(/-/g, "");
+  };
+
   const handlePhoneSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const cleanedPhone = cleanPhoneNumber(phone);
     setShowPhoneModal(false);
     setPaymentStatus("loading");
 
@@ -57,7 +65,7 @@ export const BookDetail: React.FC<BookDetailProps> = ({ book }) => {
       const orderRes = await fetch(`${API_URL}/create-order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ book_id: book.id, phone_number: phone }),
+        body: JSON.stringify({ book_id: book.id, phone_number: cleanedPhone }),
       });
       if (!orderRes.ok) throw new Error("Failed to create order");
       const order = await orderRes.json();
@@ -71,7 +79,7 @@ export const BookDetail: React.FC<BookDetailProps> = ({ book }) => {
         name: "Dento Nutrition",
         description: book.title,
         image: "/logo.jpeg",
-        prefill: { contact: phone },
+        prefill: { contact: cleanedPhone },
         handler: async (response: RazorpayResponse) => {
           // Step 3: Verify payment and send WhatsApp
           try {
@@ -82,7 +90,7 @@ export const BookDetail: React.FC<BookDetailProps> = ({ book }) => {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
-                phone_number: phone,
+                phone_number: cleanedPhone,
                 book_id: book.id,
               }),
             });
@@ -122,25 +130,29 @@ export const BookDetail: React.FC<BookDetailProps> = ({ book }) => {
               Your eBook will be sent to this number after payment.
             </p>
             <form onSubmit={handlePhoneSubmit} className="space-y-4">
-              <input
-                type="tel"
-                required
+              <PhoneInput
+                country={"in"}
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="919876543210 (with country code, no +)"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+                onChange={setPhone}
+                enableSearch={true}
+                placeholder="Enter your WhatsApp number"
+                inputClass="!w-full !border !border-gray-300 !rounded-lg !px-3 !py-2 !text-sm !focus:outline-none !focus:ring-2 !focus:ring-orange-400"
+                containerClass="!w-full"
+                buttonClass="!border !border-gray-300 !border-r-0 !rounded-l-lg !bg-white !hover:bg-gray-50"
+                dropdownClass="!bg-white !text-gray-900"
+                preferredCountries={["in", "us", "gb", "ae", "ca", "au"]}
               />
               <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={() => setShowPhoneModal(false)}
-                  className="flex-1 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition"
+                  className="flex-1 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg text-sm transition"
+                  className="flex-1 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg text-sm transition cursor-pointer"
                 >
                   Proceed to Pay
                 </button>
@@ -167,7 +179,7 @@ export const BookDetail: React.FC<BookDetailProps> = ({ book }) => {
             <p className="text-gray-600 text-sm mb-5">{statusMessage}</p>
             <button
               onClick={() => setPaymentStatus("idle")}
-              className="w-full py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg text-sm transition"
+              className="w-full py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg text-sm transition cursor-pointer"
             >
               Close
             </button>

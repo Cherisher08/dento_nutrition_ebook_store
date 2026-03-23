@@ -1,7 +1,31 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { type Book } from "../data/books";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
+// Define the Book interface locally to avoid dependency on books.ts
+export interface Book {
+  id: number;
+  title: string;
+  subtitle?: string;
+  cover_image?: string;
+  author: string;
+  publisher: string;
+  price: number;
+  originalPrice?: number;
+  rating?: number;
+  reviews?: number;
+  description: string;
+  details: {
+    language: string;
+    pages: number;
+    format?: string;
+    cod: string;
+  };
+  highlights?: string[];
+  coverColor?: string;
+  editorNote?: string;
+  document_url?: string;
+}
 
 const bookContext = createContext<{
   books: Book[];
@@ -22,9 +46,8 @@ export const BookProvider = ({ children }: { children: React.ReactNode }) => {
       const data: Book[] = await res.json();
       setBooks(data);
     } catch (err) {
-      console.error("Failed to load books from API, falling back to static data", err);
-      const { books: staticBooks } = await import("../data/books");
-      setBooks(staticBooks);
+      console.error("Failed to load books from API", err);
+      setBooks([]);
     } finally {
       setLoading(false);
     }
