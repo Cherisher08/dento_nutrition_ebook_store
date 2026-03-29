@@ -119,8 +119,6 @@ export const BookDetail: React.FC<BookDetailProps> = ({ book }) => {
     }
   };
 
-  console.log("book.rating: ", book.rating);
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16 mt-6">
       {/* Phone Number Modal */}
@@ -138,10 +136,7 @@ export const BookDetail: React.FC<BookDetailProps> = ({ book }) => {
                 onChange={setPhone}
                 enableSearch={true}
                 placeholder="Enter your WhatsApp number"
-                inputClass="!w-full !border !border-gray-300 !rounded-lg !px-3 !py-2 !text-sm !focus:outline-none !focus:ring-2 !focus:ring-orange-400"
-                containerClass="!w-full"
-                buttonClass="!border !border-gray-300 !border-r-0 !rounded-l-lg !bg-white !hover:bg-gray-50"
-                dropdownClass="!bg-white !text-gray-900"
+                inputClass="!w-full !rounded-lg"
                 preferredCountries={["in", "us", "gb", "ae", "ca", "au"]}
               />
               <div className="flex gap-3">
