@@ -58,7 +58,7 @@ const testimonials: Testimonial[] = [
   },
   {
     name: "Kaviya R",
-    location: "Houston, USA",
+    location: "Coimbatore",
     testimonial:
       "We also got her ebooks later, but what really made the difference was her guidance during the session. It helped us understand how to use those recipes correctly for our child.",
   },
@@ -158,4 +158,3 @@ export const TestimonialsSection: React.FC = () => {
     </div>
   );
 };
-
