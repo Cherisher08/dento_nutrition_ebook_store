@@ -2,7 +2,9 @@ import React, { useEffect } from "react";
 import { useParams, useNavigate, Navigate } from "react-router-dom";
 import { BookDetail } from "../components/BookDetail";
 import { AboutSection } from "../components/AboutSection";
+import { TestimonialsSection } from "../components/TestimonialsSection";
 import { OtherBooks } from "../components/OtherBooks";
+import { ReviewsSection } from "../components/ReviewsSection";
 import useBooks from "../contexts/booksContext";
 import Loader from "../components/Loader";
 import Search from "../components/Search";
@@ -40,11 +42,15 @@ export const BookPage: React.FC = () => {
 
       <AboutSection />
 
+      <TestimonialsSection />
+
       <OtherBooks
         currentBookId={book.id}
         books={books}
         onBookClick={(b) => navigate(`/book/${b.id}`)}
       />
+
+      <ReviewsSection bookId={book.id} />
     </div>
   );
 };

@@ -27,6 +27,15 @@ export interface Book {
   document_url?: string;
 }
 
+export interface Review {
+  id: number;
+  book_id: number;
+  rating: number;
+  review_text?: string;
+  user_name?: string;
+  created_at: string; // ISO date string
+}
+
 const bookContext = createContext<{
   books: Book[];
   setBooks: React.Dispatch<React.SetStateAction<Book[]>>;

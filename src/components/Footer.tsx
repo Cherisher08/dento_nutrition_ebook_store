@@ -1,4 +1,4 @@
-import { Instagram, Mail, Youtube } from "lucide-react";
+import { Instagram, Mail } from "lucide-react";
 import React from "react";
 
 export const Footer: React.FC = () => {
@@ -15,13 +15,16 @@ export const Footer: React.FC = () => {
             </p>
           </div>
           <div className="flex space-x-6">
-            <a href="#" className="text-gray-500 hover:text-gray-900 text-sm">
+            <a
+              href="https://www.instagram.com/thedentonutrition/"
+              className="text-gray-500 hover:text-gray-900 text-sm"
+            >
               <Instagram />
             </a>
-            <a href="#" className="text-gray-500 hover:text-gray-900 text-sm">
-              <Youtube />
-            </a>
-            <a href="#" className="text-gray-500 hover:text-gray-900 text-sm">
+            <a
+              href="mailto:sreeya.dentonutrition@gmail.com"
+              className="text-gray-500 hover:text-gray-900 text-sm"
+            >
               <Mail />
             </a>
           </div>
