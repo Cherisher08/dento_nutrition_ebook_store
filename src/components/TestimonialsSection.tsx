@@ -81,11 +81,17 @@ export const TestimonialsSection: React.FC = () => {
     getTestimonialsPerScreen(typeof window !== "undefined" ? window.innerWidth : 1024),
   );
 
+  // Track if screen is large (>= 1025px) for side button layout
+  const [isLargeScreen, setIsLargeScreen] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth >= 1025 : true,
+  );
+
   // Update carousel when window is resized
   useEffect(() => {
     const handleResize = () => {
       const itemsToShow = getTestimonialsPerScreen(window.innerWidth);
       setTestimonialsToShow(itemsToShow);
+      setIsLargeScreen(window.innerWidth >= 1025);
 
       // Keep current index valid for the new item count
       setCurrentIndex((prev) => {
@@ -129,75 +135,149 @@ export const TestimonialsSection: React.FC = () => {
         What Readers Say
       </h3>
 
-      <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-        {/* Testimonials Carousel Container */}
+      {isLargeScreen ? (
+        // Large screen: buttons on sides
+        <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+          <div className="flex items-center gap-2 sm:gap-4">
+            {/* Left Button */}
+            <button
+              onClick={prevSlide}
+              className="shrink-0 bg-white rounded-full p-2 sm:p-3 shadow-lg hover:bg-gray-50 transition-colors cursor-pointer"
+              aria-label="Previous testimonials"
+            >
+              <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
+            </button>
 
-        {/* Testimonials Carousel */}
-        <div className="overflow-hidden px-4 sm:px-0">
-          <div
-            className="flex transition-transform duration-500 ease-in-out"
-            style={{ transform: `translateX(-${currentIndex * (100 / testimonialsToShow)}%)` }}
-          >
-            {testimonials.map((testimonial, index) => (
+            {/* Testimonials Carousel */}
+            <div className="overflow-hidden px-2 sm:px-4 flex-1">
               <div
-                key={index}
-                className="shrink-0 w-full px-2 sm:px-4"
-                style={{ width: `${100 / testimonialsToShow}%` }}
+                className="flex transition-transform duration-500 ease-in-out"
+                style={{ transform: `translateX(-${currentIndex * (100 / testimonialsToShow)}%)` }}
               >
-                <div className="bg-gradient-to-br from-blue-50 to-pink-50 rounded-lg p-4 sm:p-6 h-full border border-gray-100 flex flex-col">
-                  <div className="mb-4">
-                    <div className="font-semibold text-gray-900 text-base sm:text-lg">
-                      {testimonial.name}
+                {testimonials.map((testimonial, index) => (
+                  <div
+                    key={index}
+                    className="shrink-0 w-full px-2 sm:px-4"
+                    style={{ width: `${100 / testimonialsToShow}%` }}
+                  >
+                    <div className="bg-gradient-to-br from-blue-50 to-pink-50 rounded-lg p-4 sm:p-6 h-full border border-gray-100 flex flex-col">
+                      <div className="mb-4">
+                        <div className="font-semibold text-gray-900 text-base sm:text-lg">
+                          {testimonial.name}
+                        </div>
+                        <div className="text-xs sm:text-sm text-gray-500">
+                          {testimonial.location}
+                        </div>
+                      </div>
+                      <div className="flex-1 flex items-start justify-center min-h-64 sm:min-h-80 md:min-h-96">
+                        <img
+                          src={testimonial.image}
+                          alt={`Feedback from ${testimonial.name}`}
+                          className="max-w-full max-h-64 sm:max-h-80 md:max-h-96 object-contain"
+                        />
+                      </div>
                     </div>
-                    <div className="text-xs sm:text-sm text-gray-500">{testimonial.location}</div>
                   </div>
-                  <div className="flex-1 flex items-start justify-center min-h-64 sm:min-h-80 md:min-h-96">
-                    <img
-                      src={testimonial.image}
-                      alt={`Feedback from ${testimonial.name}`}
-                      className="max-w-full max-h-64 sm:max-h-80 md:max-h-96 object-contain"
-                    />
-                  </div>
-                </div>
+                ))}
               </div>
+            </div>
+
+            {/* Right Button */}
+            <button
+              onClick={nextSlide}
+              className="shrink-0 bg-white rounded-full p-2 sm:p-3 shadow-lg hover:bg-gray-50 transition-colors cursor-pointer"
+              aria-label="Next testimonials"
+            >
+              <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
+            </button>
+          </div>
+
+          {/* Dots Indicator */}
+          <div className="flex justify-center gap-2 mt-6 sm:mt-8 flex-wrap px-4">
+            {Array.from({ length: maxIndex + 1 }).map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`h-2 rounded-full transition-all ${
+                  index === currentIndex
+                    ? "w-6 sm:w-8 bg-blue-500"
+                    : "w-2 bg-gray-300 hover:bg-gray-400"
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+              />
             ))}
           </div>
         </div>
+      ) : (
+        // Small/medium screen: buttons below full-width carousel
+        <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+          {/* Testimonials Carousel */}
+          <div className="overflow-hidden px-4 sm:px-0">
+            <div
+              className="flex transition-transform duration-500 ease-in-out"
+              style={{ transform: `translateX(-${currentIndex * (100 / testimonialsToShow)}%)` }}
+            >
+              {testimonials.map((testimonial, index) => (
+                <div
+                  key={index}
+                  className="shrink-0 w-full px-2 sm:px-4"
+                  style={{ width: `${100 / testimonialsToShow}%` }}
+                >
+                  <div className="bg-gradient-to-br from-blue-50 to-pink-50 rounded-lg p-4 sm:p-6 h-full border border-gray-100 flex flex-col">
+                    <div className="mb-4">
+                      <div className="font-semibold text-gray-900 text-base sm:text-lg">
+                        {testimonial.name}
+                      </div>
+                      <div className="text-xs sm:text-sm text-gray-500">{testimonial.location}</div>
+                    </div>
+                    <div className="flex-1 flex items-start justify-center min-h-64 sm:min-h-80 md:min-h-96">
+                      <img
+                        src={testimonial.image}
+                        alt={`Feedback from ${testimonial.name}`}
+                        className="max-w-full max-h-64 sm:max-h-80 md:max-h-96 object-contain"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-center gap-3 sm:gap-4 mt-6 sm:mt-8">
-          <button
-            onClick={prevSlide}
-            className="bg-white rounded-full p-2 sm:p-3 shadow-lg hover:bg-gray-50 transition-colors"
-            aria-label="Previous testimonials"
-          >
-            <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
-          </button>
-          <button
-            onClick={nextSlide}
-            className="bg-white rounded-full p-2 sm:p-3 shadow-lg hover:bg-gray-50 transition-colors"
-            aria-label="Next testimonials"
-          >
-            <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
-          </button>
-        </div>
-
-        {/* Dots Indicator */}
-        <div className="flex justify-center gap-2 mt-6 sm:mt-8 flex-wrap px-4">
-          {Array.from({ length: maxIndex + 1 }).map((_, index) => (
+          {/* Navigation Buttons - Below carousel */}
+          <div className="flex justify-center gap-3 sm:gap-4 mt-6 sm:mt-8">
             <button
-              key={index}
-              onClick={() => setCurrentIndex(index)}
-              className={`h-2 rounded-full transition-all ${
-                index === currentIndex
-                  ? "w-6 sm:w-8 bg-blue-500"
-                  : "w-2 bg-gray-300 hover:bg-gray-400"
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
+              onClick={prevSlide}
+              className="bg-white rounded-full p-2 sm:p-3 shadow-lg hover:bg-gray-50 transition-colors cursor-pointer"
+              aria-label="Previous testimonials"
+            >
+              <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
+            </button>
+            <button
+              onClick={nextSlide}
+              className="bg-white rounded-full p-2 sm:p-3 shadow-lg hover:bg-gray-50 transition-colors cursor-pointer"
+              aria-label="Next testimonials"
+            >
+              <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
+            </button>
+          </div>
+
+          {/* Dots Indicator */}
+          <div className="flex justify-center gap-2 mt-6 sm:mt-8 flex-wrap px-4">
+            {Array.from({ length: maxIndex + 1 }).map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`h-2 rounded-full transition-all ${
+                  index === currentIndex
+                    ? "w-6 sm:w-8 bg-blue-500"
+                    : "w-2 bg-gray-300 hover:bg-gray-400"
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
