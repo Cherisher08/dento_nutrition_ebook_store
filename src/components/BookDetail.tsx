@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { type Book } from "../contexts/booksContext";
-import { FileText, BookOpen, Check, Languages } from "lucide-react";
+import { FileText, BookOpen, Check, Languages, ShoppingCart } from "lucide-react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { useCart } from "../hooks/useCart";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -38,6 +39,7 @@ interface BookDetailProps {
 }
 
 export const BookDetail: React.FC<BookDetailProps> = ({ book }) => {
+  const { addToCart, isBookInCart } = useCart();
   const [phone, setPhone] = useState("");
   const [showPhoneModal, setShowPhoneModal] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<"idle" | "loading" | "success" | "error">(
@@ -235,6 +237,26 @@ export const BookDetail: React.FC<BookDetailProps> = ({ book }) => {
                 )}
               </>
             )}
+          </button>
+          <button
+            className={`flex-1 py-3 px-6 rounded-xl cursor-pointer font-bold flex items-center justify-center gap-2 transition-colors shadow-sm ${
+              isBookInCart(book.id)
+                ? "bg-gray-200 text-gray-600 cursor-not-allowed"
+                : "bg-orange-100 text-orange-700 hover:bg-orange-200"
+            } disabled:opacity-60`}
+            onClick={() =>
+              !isBookInCart(book.id) &&
+              addToCart({
+                bookId: book.id,
+                title: book.title,
+                price: book.price,
+                coverImage: book.cover_image || "",
+              })
+            }
+            disabled={paymentStatus === "loading" || isBookInCart(book.id)}
+          >
+            <ShoppingCart className="w-5 h-5" />
+            {isBookInCart(book.id) ? "Already Added" : "Add to Cart"}
           </button>
         </div>
       </div>
