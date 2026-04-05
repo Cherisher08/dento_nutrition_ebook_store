@@ -4,63 +4,64 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 interface Testimonial {
   name: string;
   location: string;
-  testimonial: string;
+  image: string;
 }
 
 const testimonials: Testimonial[] = [
   {
     name: "Deepadharshini K",
     location: "Chennai",
-    testimonial:
-      "I attended one of her webinars and was really impressed by how clearly she explained child nutrition. I also asked a few doubts personally, and she patiently clarified everything. You can see her clinical experience in the way she guides.",
+    image: "/Feedback_1.png",
   },
   {
     name: "Subhashree S",
     location: "Coimbatore",
-    testimonial:
-      "I have followed many nutrition pages, but her advice feels more genuine and medically sound. During the webinar, she addressed even small concerns seriously. That made a big difference.",
+    image: "/Feedback_2.png",
   },
   {
-    name: "Karthik R",
+    name: "Akalya Krishnaswamy",
     location: "Coimbatore",
-    testimonial:
-      "My wife and I had a 1:1 consultation regarding our child's eating habits. She didn't rush at all and gave practical suggestions that actually worked for us. Very approachable and knowledgeable.",
+    image: "/Feedback_3.png",
   },
   {
     name: "Ramya K",
     location: "Tiruppur",
-    testimonial:
-      "After attending her webinar, I feel much more confident about feeding my toddler. Her guidance is realistic and suits our daily routine.",
+    image: "/Feedback_4.png",
   },
   {
     name: "Divya Dharshini R",
     location: "Tiruppur",
-    testimonial:
-      "Liked how she combines her medical knowledge with practical nutrition advice. It's not just theory — everything she suggests is doable.",
+    image: "/Feedback_5.png",
   },
   {
     name: "Tulasi P",
     location: "Erode",
-    testimonial:
-      "I have attended many online sessions before, but hers stood out because she actually engages with the audience and answers questions in detail.",
+    image: "/Feedback_6.png",
   },
   {
     name: "Chandhana K",
     location: "Coimbatore",
-    testimonial:
-      "I appreciate how approachable she is. Even after the session, she guided me on a few follow-up doubts. That kind of support is rare.",
+    image: "/Feedback_7.png",
   },
   {
     name: "Nandhini SS",
     location: "Erode",
-    testimonial:
-      "The webinar was very informative without being overwhelming. She explained things in a simple way that even elders at home could understand and follow.",
+    image: "/Feedback_8.png",
   },
   {
     name: "Kaviya R",
     location: "Coimbatore",
-    testimonial:
-      "We also got her ebooks later, but what really made the difference was her guidance during the session. It helped us understand how to use those recipes correctly for our child.",
+    image: "/Feedback_9.png",
+  },
+  {
+    name: "Renuka Shree S",
+    location: "Chennai",
+    image: "/Feedback_10.png",
+  },
+  {
+    name: "Pragalya Keerthivasan",
+    location: "Tiruppur",
+    image: "/Feedback_11.png",
   },
 ];
 
@@ -117,15 +118,21 @@ export const TestimonialsSection: React.FC = () => {
             {testimonials.map((testimonial, index) => (
               <div
                 key={index}
-                className="flex-shrink-0 w-full px-4"
+                className="shrink-0 w-full px-4"
                 style={{ width: `${100 / testimonialsToShow}%` }}
               >
-                <div className="bg-gradient-to-br from-blue-50 to-pink-50 rounded-lg p-6 h-full border border-gray-100">
+                <div className="bg-gradient-to-br from-blue-50 to-pink-50 rounded-lg p-6 h-full border border-gray-100 flex flex-col">
                   <div className="mb-4">
                     <div className="font-semibold text-gray-900 text-lg">{testimonial.name}</div>
                     <div className="text-sm text-gray-500">{testimonial.location}</div>
                   </div>
-                  <p className="text-gray-700 leading-relaxed">"{testimonial.testimonial}"</p>
+                  <div className="flex-1 flex items-start justify-center min-h-96">
+                    <img
+                      src={testimonial.image}
+                      alt={`Feedback from ${testimonial.name}`}
+                      className="max-w-full max-h-full object-contain"
+                    />
+                  </div>
                 </div>
               </div>
             ))}
