@@ -4,11 +4,12 @@ import { ShoppingCart, Menu, X } from "lucide-react";
 import Search from "./Search";
 import { CartModal } from "./Cart/CartModal";
 import { useCart } from "../hooks/useCart";
+import { useCartModal } from "../contexts/cartModalContext";
 
 export const Header = () => {
   const navigate = useNavigate();
   const { getCartCount } = useCart();
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  const { isOpen: isCartOpen, openCart, closeCart } = useCartModal();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const cartCount = getCartCount();
 
@@ -18,7 +19,7 @@ export const Header = () => {
         {/* Left: Logo + Title */}
         <div className="flex items-center gap-2">
           <img src="/logo.jpeg" alt="Dento Nutrition Logo" className="w-12 h-12" />
-          <h1 className="text-xl font-bold text-gray-800">
+          <h1 className="md:text-xl font-bold text-gray-800">
             <span className="text-blue-400">DENTO</span> NUTRITION
           </h1>
         </div>
@@ -32,7 +33,7 @@ export const Header = () => {
         <div className="flex items-center gap-4 ml-4">
           {/* Shopping Cart Icon */}
           <button
-            onClick={() => setIsCartOpen(true)}
+            onClick={openCart}
             className="relative p-2 text-gray-600 hover:text-orange-500 transition cursor-pointer"
           >
             <ShoppingCart className="w-6 h-6" />
@@ -70,7 +71,7 @@ export const Header = () => {
         </div>
       </header>
 
-      <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <CartModal isOpen={isCartOpen} onClose={closeCart} />
     </>
   );
 };

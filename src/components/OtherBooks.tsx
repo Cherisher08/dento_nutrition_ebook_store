@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import type { Book } from "../contexts/booksContext";
 import { ArrowRight } from "lucide-react";
+import { DiscountTierBadge } from "./DiscountTierBadge";
+import { DiscountLadderModal } from "./DiscountLadderModal";
 
 interface OtherBooksProps {
   currentBookId: number;
@@ -9,6 +11,7 @@ interface OtherBooksProps {
 }
 
 export const OtherBooks: React.FC<OtherBooksProps> = ({ currentBookId, books, onBookClick }) => {
+  const [showDiscountModal, setShowDiscountModal] = useState(false);
   const otherBooks = books.filter((book) => book.id !== currentBookId);
 
   if (otherBooks.length === 0) return null;
@@ -21,9 +24,14 @@ export const OtherBooks: React.FC<OtherBooksProps> = ({ currentBookId, books, on
         {otherBooks.map((book) => (
           <div
             key={book.id}
-            className="shrink-0 w-72 snap-start bg-white rounded-xl border border-gray-100 p-4 transition-all hover:shadow-md cursor-pointer group"
+            className="shrink-0 w-72 snap-start bg-white rounded-xl border border-gray-100 p-4 transition-all hover:shadow-md cursor-pointer group relative"
             onClick={() => onBookClick(book)}
           >
+            {/* Discount Badge */}
+            <div className="absolute top-4 right-4 z-10">
+              <DiscountTierBadge compact={true} onShowLadder={() => setShowDiscountModal(true)} />
+            </div>
+
             {book.cover_image ? (
               <div className="w-full max-w-sm aspect-4/5 rounded-2xl shadow-2xl overflow-hidden mb-8 transform transition-transform hover:scale-105 duration-300">
                 <img
@@ -55,6 +63,9 @@ export const OtherBooks: React.FC<OtherBooksProps> = ({ currentBookId, books, on
           </div>
         ))}
       </div>
+
+      {/* Discount Ladder Modal */}
+      <DiscountLadderModal isOpen={showDiscountModal} onClose={() => setShowDiscountModal(false)} />
     </div>
   );
 };

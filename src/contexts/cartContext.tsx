@@ -8,6 +8,14 @@ export interface CartItem {
   coverImage: string;
 }
 
+export interface DiscountTier {
+  tier: "none" | "combo" | "full";
+  discount: number;
+  itemCount: number;
+  nextTierAt?: number;
+  message: string;
+}
+
 export interface CartContextType {
   items: CartItem[];
   addToCart: (book: Omit<CartItem, "quantity">) => void;
@@ -19,6 +27,7 @@ export interface CartContextType {
   getTotalDiscount: () => number;
   getCartCount: () => number;
   isBookInCart: (bookId: number) => boolean;
+  getDiscountTier: () => DiscountTier;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -44,32 +53,28 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [items]);
 
   /**
-   * Discount strategy: ₹100 off per additional book
+   * Discount strategy: Tiered combo discounts
+   * - 1 book: ₹0 discount
+   * - 2-3 books: ₹100 discount
+   * - 4+ books: ₹200 discount
+   *
    * Examples:
    * - 1 book @₹299 = ₹299 (no discount)
-   * - 2 books @₹299 each = ₹299 + (₹299 - ₹100) = ₹498
-   * - 3 books @₹299, @₹299, @₹199 = ₹299 + ₹199 + ₹99 = ₹597
-   *
-   * Calculation:
-   * - Sort by price descending (to discount cheaper books first)
-   * - 1st book: full price
-   * - 2nd+ books: price - ₹100 (minimum ₹0 if book price < ₹100)
+   * - 2 books @₹299 each = ₹598 → ₹498 (save ₹100)
+   * - 3 books @₹299, @₹299, @₹349 = ₹947 → ₹847 (save ₹100)
+   * - 4 books @₹299, @₹299, @₹349, @₹499 = ₹1446 → ₹1246 (save ₹200)
    */
   const getDiscountedPrice = (): number => {
-    if (items.length === 0) return 0;
+    const totalItems = getCartCount();
+    const totalPrice = getTotalPrice();
 
-    // Expand items by quantity and sort by price descending
-    const allBooks = items
-      .flatMap((item) => Array(item.quantity).fill(item.price))
-      .sort((a, b) => b - a);
-
-    // 1st book full price, rest with ₹100 discount
-    return allBooks.reduce((total, price, index) => {
-      if (index === 0) {
-        return total + price;
-      }
-      return total + Math.max(0, price - 100);
-    }, 0);
+    if (totalItems === 0 || totalItems === 1) {
+      return totalPrice;
+    } else if (totalItems <= 3) {
+      return totalPrice - 100;
+    } else {
+      return totalPrice - 200;
+    }
   };
 
   const getTotalPrice = (): number => {
@@ -121,6 +126,44 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return items.some((item) => item.bookId === bookId);
   };
 
+  const getDiscountTier = (): DiscountTier => {
+    const itemCount = getCartCount();
+
+    if (itemCount === 0) {
+      return {
+        tier: "none",
+        discount: 0,
+        itemCount: 0,
+        nextTierAt: 2,
+        message: "Add 2 books to get ₹100 discount!",
+      };
+    } else if (itemCount === 1) {
+      return {
+        tier: "none",
+        discount: 0,
+        itemCount: 1,
+        nextTierAt: 2,
+        message: "Add 1 more to unlock ₹100 savings!",
+      };
+    } else if (itemCount <= 3) {
+      const itemsNeeded = 4 - itemCount;
+      return {
+        tier: "combo",
+        discount: 100,
+        itemCount,
+        nextTierAt: 4,
+        message: `Add ${itemsNeeded} more to unlock ₹200 savings! (${itemCount}/4)`,
+      };
+    } else {
+      return {
+        tier: "full",
+        discount: 200,
+        itemCount,
+        message: "✓ Maximum discount unlocked!",
+      };
+    }
+  };
+
   const value: CartContextType = {
     items,
     addToCart,
@@ -132,6 +175,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     getTotalDiscount,
     getCartCount,
     isBookInCart,
+    getDiscountTier,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

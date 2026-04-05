@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useCart } from "../../hooks/useCart";
-import { Trash2 } from "lucide-react";
+import { Trash2, Zap } from "lucide-react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
@@ -41,8 +41,16 @@ interface CartModalProps {
 }
 
 export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
-  const { items, removeFromCart, getTotalPrice, getDiscountedPrice, getTotalDiscount, clearCart } =
-    useCart();
+  const {
+    items,
+    removeFromCart,
+    getTotalPrice,
+    getDiscountedPrice,
+    getTotalDiscount,
+    clearCart,
+    getCartCount,
+    getDiscountTier,
+  } = useCart();
   const [phone, setPhone] = useState("");
   const [showPhoneModal, setShowPhoneModal] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<"idle" | "loading" | "success" | "error">(
@@ -223,26 +231,39 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
 
         {/* Price Summary */}
         {items.length > 0 && (
-          <div className="border-t border-gray-200 p-6 space-y-3">
-            <div className="flex justify-between text-gray-600">
-              <span>Subtotal:</span>
-              <span>₹{getTotalPrice()}</span>
-            </div>
-            {getTotalDiscount() > 0 && (
-              <div className="flex justify-between text-green-600 font-semibold">
-                <span>Discount:</span>
-                <span>-₹{getTotalDiscount()}</span>
+          <div className="border-t border-gray-200 p-6 space-y-4">
+            {/* Discount Tier Hint */}
+            <div className="bg-linear-to-r from-emerald-50 to-cyan-50 border border-emerald-200 rounded-lg p-3 flex items-start gap-3">
+              <Zap className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold text-emerald-700 text-sm">
+                  {getDiscountTier().message}
+                </p>
+                <p className="text-xs text-emerald-600 mt-1">
+                  Smart savings with bundles - get maximum value!
+                </p>
               </div>
-            )}
-            <div className="border-t border-gray-200 pt-3 flex justify-between text-lg font-bold text-gray-900">
-              <span>Total:</span>
-              <span>₹{getDiscountedPrice()}</span>
             </div>
-            {getTotalDiscount() > 0 && (
-              <p className="text-xs text-green-600 text-center">
-                You save ₹{getTotalDiscount()} with our multi-book discount!
-              </p>
-            )}
+
+            {/* Price Breakdown */}
+            <div className="space-y-2">
+              <div className="flex justify-between text-gray-600">
+                <span>
+                  Subtotal ({getCartCount()} item{getCartCount() !== 1 ? "s" : ""}):
+                </span>
+                <span className="font-medium">₹{getTotalPrice()}</span>
+              </div>
+              {getTotalDiscount() > 0 && (
+                <div className="flex justify-between text-emerald-600 font-semibold">
+                  <span>Discount Applied:</span>
+                  <span className="text-lg">-₹{getTotalDiscount()}</span>
+                </div>
+              )}
+              <div className="border-t border-gray-200 pt-3 flex justify-between text-lg font-bold text-gray-900">
+                <span>Final Price:</span>
+                <span className="text-emerald-600">₹{getDiscountedPrice()}</span>
+              </div>
+            </div>
           </div>
         )}
 

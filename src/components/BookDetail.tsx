@@ -4,6 +4,9 @@ import { FileText, BookOpen, Check, Languages, ShoppingCart } from "lucide-react
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { useCart } from "../hooks/useCart";
+import { useCartModal } from "../contexts/cartModalContext";
+import { DiscountLadderModal } from "./DiscountLadderModal";
+import { DiscountTierBadge } from "./DiscountTierBadge";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -40,15 +43,26 @@ interface BookDetailProps {
 
 export const BookDetail: React.FC<BookDetailProps> = ({ book }) => {
   const { addToCart, isBookInCart } = useCart();
+  const { openCart } = useCartModal();
   const [phone, setPhone] = useState("");
   const [showPhoneModal, setShowPhoneModal] = useState(false);
+  const [showDiscountModal, setShowDiscountModal] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<"idle" | "loading" | "success" | "error">(
     "idle",
   );
   const [statusMessage, setStatusMessage] = useState("");
 
   const handleBuyClick = () => {
-    setShowPhoneModal(true);
+    // Only add to cart if not already present (prevents duplicate eBook purchases)
+    if (!isBookInCart(book.id)) {
+      addToCart({
+        bookId: book.id,
+        title: book.title,
+        price: book.price,
+        coverImage: book.cover_image || "",
+      });
+    }
+    openCart();
   };
 
   // Clean phone number: remove spaces, keep + and digits
@@ -221,43 +235,45 @@ export const BookDetail: React.FC<BookDetailProps> = ({ book }) => {
           </div>
         </div>
 
-        <div className="flex gap-4 mt-8 w-full max-w-sm">
-          <button
-            className="flex-1 py-3 px-6 rounded-xl cursor-pointer bg-cyan-200 font-bold text-gray-900 hover:bg-cyan-300 transition-colors shadow-sm disabled:opacity-60"
-            onClick={handleBuyClick}
-            disabled={paymentStatus === "loading"}
-          >
-            {paymentStatus === "loading" ? (
-              "Processing…"
-            ) : (
-              <>
-                Buy ₹{book.price}{" "}
-                {book.originalPrice && (
-                  <span className="line-through pl-2 text-gray-600">₹{book.originalPrice}</span>
-                )}
-              </>
-            )}
-          </button>
-          <button
-            className={`flex-1 py-3 px-6 rounded-xl cursor-pointer font-bold flex items-center justify-center gap-2 transition-colors shadow-sm ${
-              isBookInCart(book.id)
-                ? "bg-gray-200 text-gray-600 cursor-not-allowed"
-                : "bg-orange-100 text-orange-700 hover:bg-orange-200"
-            } disabled:opacity-60`}
-            onClick={() =>
-              !isBookInCart(book.id) &&
-              addToCart({
-                bookId: book.id,
-                title: book.title,
-                price: book.price,
-                coverImage: book.cover_image || "",
-              })
-            }
-            disabled={paymentStatus === "loading" || isBookInCart(book.id)}
-          >
-            <ShoppingCart className="w-5 h-5" />
-            {isBookInCart(book.id) ? "Already Added" : "Add to Cart"}
-          </button>
+        <div className="flex flex-col gap-3 mt-8 w-full max-w-sm ">
+          <div className="flex gap-4">
+            <button
+              className="flex-1 py-3 px-6 rounded-xl cursor-pointer bg-cyan-200 font-bold text-gray-900 hover:bg-cyan-300 transition-colors shadow-sm disabled:opacity-60"
+              onClick={handleBuyClick}
+              disabled={paymentStatus === "loading"}
+            >
+              {paymentStatus === "loading" ? (
+                "Processing…"
+              ) : (
+                <>
+                  Buy ₹{book.price}{" "}
+                  {book.originalPrice && (
+                    <span className="line-through pl-2 text-gray-600">₹{book.originalPrice}</span>
+                  )}
+                </>
+              )}
+            </button>
+            <button
+              className={`flex-1 py-3 px-6 rounded-xl cursor-pointer font-bold flex items-center justify-center gap-2 transition-colors shadow-sm ${
+                isBookInCart(book.id)
+                  ? "bg-gray-200 text-gray-600 cursor-not-allowed"
+                  : "bg-orange-100 text-orange-700 hover:bg-orange-200"
+              } disabled:opacity-60`}
+              onClick={() =>
+                !isBookInCart(book.id) &&
+                addToCart({
+                  bookId: book.id,
+                  title: book.title,
+                  price: book.price,
+                  coverImage: book.cover_image || "",
+                })
+              }
+              disabled={paymentStatus === "loading" || isBookInCart(book.id)}
+            >
+              <ShoppingCart className="w-5 h-5" />
+              {isBookInCart(book.id) ? "Already Added" : "Add to Cart"}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -282,7 +298,11 @@ export const BookDetail: React.FC<BookDetailProps> = ({ book }) => {
         )}
 
         <div className="mb-8">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">About the eBook</h3>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-bold text-gray-900">About the eBook</h3>
+            <DiscountTierBadge compact={true} onShowLadder={() => setShowDiscountModal(true)} />
+          </div>
+
           <p className="text-gray-600 leading-relaxed mb-6">{book.description}</p>
           <div className="space-y-3">
             {book.highlights?.map((highlight, index) => (
@@ -302,6 +322,12 @@ export const BookDetail: React.FC<BookDetailProps> = ({ book }) => {
             <p className="text-blue-600 text-sm italic">"{book.editorNote}"</p>
           </div>
         )}
+
+        {/* Discount Ladder Modal */}
+        <DiscountLadderModal
+          isOpen={showDiscountModal}
+          onClose={() => setShowDiscountModal(false)}
+        />
       </div>
     </div>
   );
