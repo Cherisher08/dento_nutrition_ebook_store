@@ -65,11 +65,39 @@ const testimonials: Testimonial[] = [
   },
 ];
 
+// Determine how many testimonials to show based on screen width
+const getTestimonialsPerScreen = (width: number): number => {
+  if (width < 640) return 1; // Mobile
+  if (width < 1024) return 2; // Tablet
+  return 3; // Desktop
+};
+
 export const TestimonialsSection: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoScrolling, setIsAutoScrolling] = useState(true);
 
-  const testimonialsToShow = 3;
+  // Initialize with responsive value based on current window size
+  const [testimonialsToShow, setTestimonialsToShow] = useState(() =>
+    getTestimonialsPerScreen(typeof window !== "undefined" ? window.innerWidth : 1024),
+  );
+
+  // Update carousel when window is resized
+  useEffect(() => {
+    const handleResize = () => {
+      const itemsToShow = getTestimonialsPerScreen(window.innerWidth);
+      setTestimonialsToShow(itemsToShow);
+
+      // Keep current index valid for the new item count
+      setCurrentIndex((prev) => {
+        const maxIndex = testimonials.length - itemsToShow;
+        return prev > maxIndex ? maxIndex : prev;
+      });
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const maxIndex = testimonials.length - testimonialsToShow;
 
   const nextSlide = () => {
@@ -97,20 +125,15 @@ export const TestimonialsSection: React.FC = () => {
 
   return (
     <div className="mt-12 pt-8 border-t border-gray-200">
-      <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">What Readers Say</h3>
+      <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-8 text-center">
+        What Readers Say
+      </h3>
 
       <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-        {/* Left Button */}
-        <button
-          onClick={prevSlide}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-50 transition-colors"
-          aria-label="Previous testimonials"
-        >
-          <ChevronLeft className="h-6 w-6 text-gray-600" />
-        </button>
+        {/* Testimonials Carousel Container */}
 
         {/* Testimonials Carousel */}
-        <div className="overflow-hidden">
+        <div className="overflow-hidden px-4 sm:px-0">
           <div
             className="flex transition-transform duration-500 ease-in-out"
             style={{ transform: `translateX(-${currentIndex * (100 / testimonialsToShow)}%)` }}
@@ -118,19 +141,21 @@ export const TestimonialsSection: React.FC = () => {
             {testimonials.map((testimonial, index) => (
               <div
                 key={index}
-                className="shrink-0 w-full px-4"
+                className="shrink-0 w-full px-2 sm:px-4"
                 style={{ width: `${100 / testimonialsToShow}%` }}
               >
-                <div className="bg-gradient-to-br from-blue-50 to-pink-50 rounded-lg p-6 h-full border border-gray-100 flex flex-col">
+                <div className="bg-gradient-to-br from-blue-50 to-pink-50 rounded-lg p-4 sm:p-6 h-full border border-gray-100 flex flex-col">
                   <div className="mb-4">
-                    <div className="font-semibold text-gray-900 text-lg">{testimonial.name}</div>
-                    <div className="text-sm text-gray-500">{testimonial.location}</div>
+                    <div className="font-semibold text-gray-900 text-base sm:text-lg">
+                      {testimonial.name}
+                    </div>
+                    <div className="text-xs sm:text-sm text-gray-500">{testimonial.location}</div>
                   </div>
-                  <div className="flex-1 flex items-start justify-center min-h-96">
+                  <div className="flex-1 flex items-start justify-center min-h-64 sm:min-h-80 md:min-h-96">
                     <img
                       src={testimonial.image}
                       alt={`Feedback from ${testimonial.name}`}
-                      className="max-w-full max-h-full object-contain"
+                      className="max-w-full max-h-64 sm:max-h-80 md:max-h-96 object-contain"
                     />
                   </div>
                 </div>
@@ -139,23 +164,34 @@ export const TestimonialsSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Button */}
-        <button
-          onClick={nextSlide}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-50 transition-colors"
-          aria-label="Next testimonials"
-        >
-          <ChevronRight className="h-6 w-6 text-gray-600" />
-        </button>
+        {/* Navigation Buttons */}
+        <div className="flex justify-center gap-3 sm:gap-4 mt-6 sm:mt-8">
+          <button
+            onClick={prevSlide}
+            className="bg-white rounded-full p-2 sm:p-3 shadow-lg hover:bg-gray-50 transition-colors"
+            aria-label="Previous testimonials"
+          >
+            <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="bg-white rounded-full p-2 sm:p-3 shadow-lg hover:bg-gray-50 transition-colors"
+            aria-label="Next testimonials"
+          >
+            <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
+          </button>
+        </div>
 
         {/* Dots Indicator */}
-        <div className="flex justify-center gap-2 mt-6">
+        <div className="flex justify-center gap-2 mt-6 sm:mt-8 flex-wrap px-4">
           {Array.from({ length: maxIndex + 1 }).map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
               className={`h-2 rounded-full transition-all ${
-                index === currentIndex ? "w-8 bg-blue-500" : "w-2 bg-gray-300 hover:bg-gray-400"
+                index === currentIndex
+                  ? "w-6 sm:w-8 bg-blue-500"
+                  : "w-2 bg-gray-300 hover:bg-gray-400"
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />
