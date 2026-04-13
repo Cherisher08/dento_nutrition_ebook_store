@@ -13,7 +13,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const API_URL = process.env.VITE_API_URL || 'http://localhost:8000';
-const BASE_URL = process.env.SITE_URL || 'https://dentonutrition.com';
+const BASE_URL = process.env.SITE_URL || 'https://dentonutrition.fit';
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const SITEMAP_PATH = path.join(PUBLIC_DIR, 'sitemap.xml');
 
